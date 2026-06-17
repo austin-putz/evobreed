@@ -33,7 +33,11 @@ library(Matrix)
 library(dplyr)
 library(ggplot2)
 
-source("ped_utils.R")
+utils_path <- file.path("R", "ped_utils.R")
+if (!file.exists(utils_path)) {
+  utils_path <- file.path("..", "R", "ped_utils.R")
+}
+source(utils_path)
 
 set.seed(42)
 

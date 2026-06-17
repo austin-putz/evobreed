@@ -1,0 +1,29 @@
+Package: evobreed
+Title: Optimal Contribution Selection for Livestock Breeding
+Version: 0.1.0.9000
+Authors@R:
+    person("Austin", "Putz", role = c("aut", "cre"),
+           email = "putz.austin@gmail.com")
+Author: Austin Putz [aut, cre]
+Maintainer: Austin Putz <putz.austin@gmail.com>
+Description: Tools for optimal contribution selection (OCS) in livestock
+    breeding. Provides pedigree simulation, additive relationship matrix
+    construction, and genetic algorithm-based solvers that navigate the
+    Pareto frontier between genetic gain and genetic diversity (mean
+    kinship). Supports both continuous contribution optimization and
+    discrete mating plans with integer mating allocations and configurable
+    per-sire mating limits.
+License: GPL-3 + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends:
+    R (>= 4.1.0)
+Suggests:
+    pedigreemm,
+    GA,
+    Matrix,
+    dplyr,
+    ggplot2,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

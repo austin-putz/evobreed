@@ -1,0 +1,9 @@
+^\.agents$
+^\.codex$
+^\.git$
+^\.gitignore$
+^\.Rhistory$
+^\.Rproj\.user$
+^\.\.Rcheck$
+^plans$
+^tests/testthat/\.gitkeep$

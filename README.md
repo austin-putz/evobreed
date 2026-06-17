@@ -1,5 +1,7 @@
 # evobreed
 
+<img src="images/evobreed_logo_ChatGPT_v1.png" align="right" width="220" alt="evobreed logo">
+
 **Optimal Contribution Selection (OCS) for livestock breeding in R.**
 
 evobreed provides tools for genetic gain–diversity trade-off optimization using the OCS framework. Given a candidate population with estimated breeding values (EBVs) and a pedigree-derived relationship matrix, it solves for the contribution weights (and optionally integer mating allocations) that maximize genetic gain subject to a mean kinship constraint — or traces the full Pareto frontier between the two objectives.
@@ -29,22 +31,44 @@ OCS sits on the efficient Pareto frontier between these two objectives, allowing
 
 ## Installation
 
-evobreed is currently a collection of R scripts. Clone the repository and source the utilities directly:
+Install evobreed from GitHub with `pak`:
 
 ```r
-# Clone
-# git clone https://github.com/<your-username>/evobreed.git
+install.packages("pak")
+pak::pak("austin-putz/evobreed")
+```
 
-# In R, from the project directory
-source("ped_utils.R")
+To install a fixed version from GitHub, pin the install to a release tag,
+branch, or commit SHA:
+
+```r
+# Latest GitHub release
+pak::pak("austin-putz/evobreed@*release")
+
+# A specific release tag
+pak::pak("austin-putz/evobreed@v0.1.0")
+
+# A specific branch
+pak::pak("austin-putz/evobreed@main")
+
+# A specific commit
+pak::pak("austin-putz/evobreed@abc1234")
+```
+
+For reproducible analyses, prefer a release tag or full commit SHA over the
+default branch, since the default branch changes as development continues.
+
+Then load the package:
+
+```r
+library(evobreed)
 ```
 
 **Dependencies:**
 
-```r
-install.packages(c("GA", "Matrix", "dplyr", "ggplot2"))
+`pak` installs package dependencies automatically. The example scripts also use `GA`, `Matrix`, `dplyr`, and `ggplot2`; `pedigreemm` is recommended for faster A-matrix computation.
 
-# Recommended for faster A-matrix computation
+```r
 install.packages("pedigreemm")
 ```
 
@@ -55,7 +79,7 @@ install.packages("pedigreemm")
 ### 1. Build a pedigree and relationship matrix
 
 ```r
-source("ped_utils.R")
+library(evobreed)
 
 ped <- build_ped(
   n_male_founders   = 5,
@@ -73,7 +97,7 @@ A <- build_a_matrix(ped)
 ### 2. Run continuous OCS (real-valued contributions)
 
 ```r
-source("breeding_optimization_example.R")
+source("scripts/breeding_optimization_example.R")
 ```
 
 This script:
@@ -85,7 +109,7 @@ This script:
 ### 3. Run constrained OCS (integer matings + binary female selection)
 
 ```r
-source("breeding_optimization_constrained.R")
+source("scripts/breeding_optimization_constrained.R")
 ```
 
 This script enforces practical mating constraints:
@@ -156,4 +180,4 @@ Computes the additive relationship matrix (A) where A[i,j] = 2 × kinship(i,j) a
 
 ## License
 
-MIT
+GPL-3

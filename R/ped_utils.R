@@ -1,29 +1,25 @@
-# ped_utils.R
-# Pedigree simulation and additive relationship matrix utilities
-# ============================================================================
-#
-# build_ped()      — simulate a multi-generation pedigree
-# build_a_matrix() — compute A from a pedigree (uses pedigreemm when available,
-#                    falls back to Henderson 1976 tabular method)
-# ============================================================================
-
 #' Simulate a multi-generation pedigree
 #'
-#' Founders (generation 0) have no parents.  Each subsequent generation uses
+#' Founders in generation 0 have no parents. Each subsequent generation uses
 #' random mating: dams are sampled without replacement where possible (each
 #' dam mated at most once per generation); sires are sampled with replacement.
 #'
-#' @param n_male_founders   Males in generation 0 (no parents)
+#' @param n_male_founders Males in generation 0 (no parents)
 #' @param n_female_founders Females in generation 0
-#' @param n_gen             Number of offspring generations to simulate
-#' @param n_males_per_gen   Target male offspring per generation
+#' @param n_gen Number of offspring generations to simulate
+#' @param n_males_per_gen Target male offspring per generation
 #' @param n_females_per_gen Target female offspring per generation
-#' @param litter_size       Offspring per dam per generation
-#' @param seed              Optional RNG seed for reproducibility
+#' @param litter_size Offspring per dam per generation
+#' @param seed Optional RNG seed for reproducibility
 #'
-#' @return data.frame with columns: id, sire, dam (NA = founder), sex, gen
-#'         Rows are ordered parents-before-offspring (required for A-matrix).
-
+#' @return A `data.frame` with columns `id`, `sire`, `dam`, `sex`, and `gen`.
+#' Rows are ordered parents before offspring, which is required for additive
+#' relationship matrix construction.
+#' @export
+#'
+#' @examples
+#' ped <- build_ped(n_gen = 1, seed = 1)
+#' head(ped)
 build_ped <- function(
     n_male_founders   = 5,
     n_female_founders = 5,
@@ -114,8 +110,13 @@ build_ped <- function(
 #' to the Henderson (1976) tabular method (O(n^2), suitable for n < ~5000).
 #'
 #' @param ped_df data.frame with columns id, sire, dam (as returned by build_ped)
-#' @return Named n×n matrix A
-
+#' @return Named n-by-n matrix A
+#' @export
+#'
+#' @examples
+#' ped <- build_ped(n_gen = 1, seed = 1)
+#' A <- build_a_matrix(ped)
+#' dim(A)
 build_a_matrix <- function(ped_df) {
   n   <- nrow(ped_df)
   ids <- as.character(ped_df$id)
@@ -131,13 +132,13 @@ build_a_matrix <- function(ped_df) {
     return(A)
   }
 
-  message("pedigreemm not installed — using Henderson (1976) tabular method")
+  message("pedigreemm not installed - using Henderson (1976) tabular method")
   message("  Install with: install.packages('pedigreemm')")
 
   # Tabular method:
   #   A[i,i] = 1 + 0.5 * A[sire, dam]
   #   A[i,j] = 0.5 * (A[sire_i, j] + A[dam_i, j])  for j < i
-  lookup <- setNames(seq_len(n), ids)
+  lookup <- stats::setNames(seq_len(n), ids)
   si <- lookup[as.character(ped_df$sire)]  # NA for founders
   di <- lookup[as.character(ped_df$dam)]
 
