@@ -1,4 +1,5 @@
 *.Rproj
-.Rproject_user/*
+.Rproj.user
+.Rproj.user/*
 .Rhistory
 
