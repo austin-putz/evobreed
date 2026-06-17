@@ -1,0 +1,4 @@
+*.Rproj
+.Rproject_user/*
+.Rhistory
+
