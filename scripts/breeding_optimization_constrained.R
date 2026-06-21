@@ -76,14 +76,26 @@ population <- data.frame(
   row.names = cand_df$id
 )
 
-population |> arrange(sex, desc(ebv))
+# print population
+population |> 
+  arrange(desc(sex), desc(ebv))
+
+# print population
+population |> 
+ggplot(aes(x=ebv, fill=sex)) +
+  geom_histogram(color="white") +
+  facet_wrap(~sex, ncol=1) +
+  scale_fill_manual("Sex", values = c("magenta2", "dodgerblue2"))
 
 cat("=== CANDIDATE POPULATION (last generation) ===\n")
 print(population)
 cat("\nMales:", sum(population$sex == "M"), "| Females:", sum(population$sex == "F"), "\n\n")
 
+# get index values for males and females
 male_idx   <- which(population$sex == "M")
 female_idx <- which(population$sex == "F")
+
+# set number of males and females
 n_males    <- length(male_idx)
 n_females  <- length(female_idx)
 
@@ -91,7 +103,10 @@ n_females  <- length(female_idx)
 # 2. BUILD A MATRIX FROM PEDIGREE
 # ============================================================================
 
+# build A matrix
 A_full   <- build_a_matrix(ped_full)
+
+# subset A matrix to only candidates, don't use full A matrix downstream
 A_matrix <- A_full[individual_ids, individual_ids]
 
 cat("=== RELATIONSHIP MATRIX — candidates (first 5x5) ===\n")
@@ -102,6 +117,7 @@ cat("\n")
 # 3. CONSTRAINT CONFIGURATION
 # ============================================================================
 
+# constraint list
 constraints <- list(
   sex_ratio        = 0.5,  # 50% contribution from males, 50% from females
   target_angle     = 45,   # degrees [0, 90]: 0 = diversity only, 90 = gain only
@@ -109,9 +125,13 @@ constraints <- list(
   max_male_matings = 3     # maximum number of matings per male
 )
 
+# print constraints
+print(constraints)
+
 # Derived: total matings = n females selected (each female gets 1 mating)
 n_total_matings <- constraints$n_select_females
 
+# print messages
 cat(sprintf("n_select_females:   %d  (binary selection, 1 mating each)\n", constraints$n_select_females))
 cat(sprintf("max_male_matings:   %d  per male\n",                           constraints$max_male_matings))
 cat(sprintf("Total matings:      %d\n",                                      n_total_matings))
@@ -126,10 +146,13 @@ cat(sprintf("Target angle:       %g° | gain weight = %.4f | diversity weight = 
 # ============================================================================
 # 4. INTEGER MATING ALLOCATION (largest-remainder method)
 # ============================================================================
+
 # Converts continuous male weights → integer matings summing to n_total,
 # each male capped at max_per. Sum is always exactly n_total.
 
+# define function to allocate matings
 allocate_matings <- function(weights, n_total, max_per) {
+  
   if (sum(weights) == 0) weights <- rep(1, length(weights))
 
   raw   <- weights / sum(weights) * n_total

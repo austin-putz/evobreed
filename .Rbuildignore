@@ -7,3 +7,4 @@
 ^\.\.Rcheck$
 ^plans$
 ^tests/testthat/\.gitkeep$
+^.*\.Rproj$
